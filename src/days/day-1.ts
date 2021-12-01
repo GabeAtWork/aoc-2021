@@ -24,9 +24,9 @@ async function main() {
     getFileContents,
     TE.map(splitIntoLines),
     TE.map(A.map(parseInt)),
-    TE.map(groupArrayByTriples),
+    TE.map(A.chop(trioChopper)),
     TE.map(A.map(A.reduce(0, add))),
-    TE.map(groupArrayByPairs),
+    TE.map(A.chop(pairChopper)),
     TE.map(
       A.map(([previousWindowResult, nextWindowResult]) => {
         if (nextWindowResult > previousWindowResult) {
@@ -50,26 +50,9 @@ function add(a: number, b: number) {
   return a + b;
 }
 
-function groupArrayByPairs<X>(xs: X[]): [X, X][] {
-  let result: [X, X][] = [];
-
-  for (let i = 0; i < xs.length; i++) {
-    if (i > 0) {
-      result.push([xs[i - 1], xs[i]]);
-    }
-  }
-
-  return result;
+function pairChopper<X>([a0, ...rest]: X[]): [[X, X], X[]] {
+  return [[a0, rest[0]], rest.length > 1 ? rest : []];
 }
-
-function groupArrayByTriples<X>(xs: X[]): [X, X, X][] {
-  let result: [X, X, X][] = [];
-
-  for (let i = 0; i < xs.length; i++) {
-    if (i > 1) {
-      result.push([xs[i - 2], xs[i - 1], xs[i]]);
-    }
-  }
-
-  return result;
+function trioChopper<X>([a0, ...rest]: X[]): [[X, X, X], X[]] {
+  return [[a0, rest[0], rest[1]], rest.length > 2 ? rest : []];
 }
